@@ -1,0 +1,18 @@
+{
+  "name": "小提琴调音器",
+  "short_name": "小提琴调音",
+  "description": "专为小提琴四根空弦设计的本地离线调音器",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f2f7",
+  "theme_color": "#f2f2f7",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
