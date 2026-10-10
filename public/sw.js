@@ -1,4 +1,4 @@
-const CACHE_NAME = "violin-ui-v4-unified-layout";
+const CACHE_NAME = "violin-ui-v5-louder-metronome";
 const APP_SHELL = ["./", "./manifest.webmanifest", "./icon.svg", "./audio-probe-processor.js"];
 
 self.addEventListener("install", (event) => {

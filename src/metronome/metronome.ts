@@ -132,15 +132,19 @@ export class MetronomeEngine {
     const accented = this.accentFirstBeat && beatNumber % this.meter === 0;
     const oscillator = context.createOscillator();
     const envelope = context.createGain();
+    // A very short, low-peak sine click is hard to hear through an iPhone speaker.
+    // Keep the peak below full scale, but give the click a stronger, longer body.
+    const peak = accented ? 0.88 : 0.56;
     oscillator.type = "sine";
     oscillator.frequency.setValueAtTime(accented ? 1320 : 980, time);
     oscillator.frequency.exponentialRampToValueAtTime(accented ? 980 : 760, time + 0.045);
     envelope.gain.setValueAtTime(0.0001, time);
-    envelope.gain.exponentialRampToValueAtTime(accented ? 0.23 : 0.14, time + 0.003);
-    envelope.gain.exponentialRampToValueAtTime(0.0001, time + 0.065);
+    envelope.gain.linearRampToValueAtTime(peak, time + 0.003);
+    envelope.gain.exponentialRampToValueAtTime(peak * 0.24, time + 0.045);
+    envelope.gain.exponentialRampToValueAtTime(0.0001, time + 0.11);
     oscillator.connect(envelope).connect(context.destination);
     oscillator.start(time);
-    oscillator.stop(time + 0.07);
+    oscillator.stop(time + 0.115);
     oscillator.onended = () => { oscillator.disconnect(); envelope.disconnect(); };
   }
 }

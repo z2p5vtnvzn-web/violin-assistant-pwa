@@ -18,7 +18,7 @@ npm run build
 npm run preview
 ```
 
-静态产物位于 `dist/`。GitHub Pages 使用 `main` 分支的 `/docs` 目录；更新时将 `dist/` 的内容同步到 `docs/` 并推送。页面诊断中的构建版本应为 `ui-v4-unified-layout`。
+静态产物位于 `dist/`。GitHub Pages 使用 `main` 分支的 `/docs` 目录；更新时将 `dist/` 的内容同步到 `docs/` 并推送。页面诊断中的构建版本应为 `ui-v5-louder-metronome`。
 
 项目页面：<https://z2p5vtnvzn-web.github.io/violin-assistant-pwa/>
 

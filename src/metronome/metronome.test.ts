@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { clampBpm, pendulumAngle, tempoFromTaps, tempoName } from "./metronome";
+import { describe, expect, it, vi } from "vitest";
+import { clampBpm, MetronomeEngine, pendulumAngle, tempoFromTaps, tempoName } from "./metronome";
 
 describe("metronome controls", () => {
   it("keeps tempo within the supported range", () => {
@@ -20,5 +20,37 @@ describe("metronome controls", () => {
     expect(Math.abs(pendulumAngle(0, 0.5))).toBeLessThan(0.001);
     expect(pendulumAngle(1, 0)).toBe(28);
     expect(pendulumAngle(1, 1)).toBe(-28);
+  });
+
+  it.each([[0, 0.88], [1, 0.56]])("gives beat %i an audible click without clipping", (beat, peak) => {
+    const gains: Array<[string, number, number]> = [];
+    const envelope = {
+      gain: {
+        setValueAtTime: (value: number, time: number) => gains.push(["set", value, time]),
+        linearRampToValueAtTime: (value: number, time: number) => gains.push(["linear", value, time]),
+        exponentialRampToValueAtTime: (value: number, time: number) => gains.push(["exponential", value, time]),
+      },
+      connect: vi.fn(),
+      disconnect: vi.fn(),
+    };
+    const oscillator = {
+      frequency: { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
+      connect: vi.fn(() => envelope),
+      start: vi.fn(),
+      stop: vi.fn(),
+      disconnect: vi.fn(),
+    };
+    const context = {
+      createOscillator: () => oscillator,
+      createGain: () => envelope,
+      destination: {},
+    } as unknown as AudioContext;
+    const engine = new MetronomeEngine();
+    Reflect.get(engine, "scheduleClick").call(engine, context, 5, beat);
+
+    expect(gains).toContainEqual(["linear", peak, 5.003]);
+    expect(gains.at(-1)).toEqual(["exponential", 0.0001, 5.11]);
+    expect(Math.max(...gains.map(([, value]) => value))).toBeLessThan(1);
+    expect(oscillator.stop).toHaveBeenCalledWith(5.115);
   });
 });
